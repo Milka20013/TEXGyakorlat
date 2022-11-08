@@ -1,0 +1,141 @@
+\documentclass [11pt]{book}
+\usepackage[utf8]{inputenc}
+
+\usepackage[magyar]{babel}
+\usepackage{t1enc}
+\frenchspacing
+
+\usepackage{hulipsum}
+\usepackage{fancyhdr}
+\fancyhead[L]{}
+\fancyhead[RE]{\nouppercase{\leftmark}}
+\fancyhead[RO]{\nouppercase{\rightmark}}
+\fancyfoot[R]{\thepage}
+
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{wrapfig}
+
+\usepackage{array}
+\usepackage[table]{xcolor}
+\usepackage{multirow}
+\usepackage{xcolor}
+\usepackage{amsmath}
+\usepackage{mathtools}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\theoremstyle{definition}
+\newtheorem{tet}{Tétel}
+\newtheorem{defin}{Definíció}
+\usepackage{chngcntr}
+\counterwithout{equation}{chapter}
+
+\usepackage{listings}
+
+\usepackage{algpseudocode}
+
+\title{Zárthelyi dolgozat\\\Large A csoport}
+\author{Bordás Milán WJB0DC}
+\date{\today}
+
+\begin{document}
+\pagestyle{fancy}
+\maketitle
+
+\chapter{1. Feladat}
+
+\section{1. Szekció}
+\hulipsum[1-5]
+\section{2. Szekció}
+\hulipsum[1-5]
+
+\chapter{2. Feladat}
+\hulipsum[1-2]
+\begin{wrapfigure}[25]{L}[0cm]{10cm}
+\centering
+\caption{Ez itt az ábra}
+\begin{subfigure}{5cm}
+\centering
+\caption{Ez a részábra}
+\includegraphics[height=4cm, scale=0.5]{szines.jpg}
+\end{subfigure}
+\\
+\begin{subfigure}{5cm}
+\centering
+\caption{Ez is részábra}
+\fbox{\includegraphics[height=4cm]{szepia.jpg}}
+\end{subfigure}
+\end{wrapfigure}
+\hulipsum[1-2]
+\chapter{3. feladat}
+\begin{defin}[Sajátérték]
+
+Legyen $A,\in \mathbb{R}^{n \times n}$, négyzetes mátrix. Azt mondjuk,hogy $\lambda \in \mathbb{C} $ sajátértéke és $v \in \mathbb{C}^n$
+a $\lambda$ sajátértékhez tartozó (jobb oldali) sajátvektora $A$-nak, ha
+\begin{equation} 
+Av = \lambda v
+\end{equation}
+\end{defin}
+
+\begin{defin}[Karakterisztikus polinom]
+Jelölje $E \in \mathbb{R}^{n \times n}$ az egységmátrixot. Az $A$ ún. \textit{karakterisztikus polinomja}
+\begin{equation} 
+\newcommand{\rlambda}{\textcolor{red}{-\lambda}}
+\varphi (\lambda) := \det(A\textcolor{red}{-\lambda E}) = 
+\begin{array}{|cccc|}
+a_{11} \rlambda & a_{12} & \dots & a_{1n} \\
+a_{21} & a_{22} \rlambda & \dots & a_{2n} \\
+\vdots & \vdots & \ddots & \vdots \\
+a_{21} & a_{22}  & \dots & a_{nn} \rlambda \\
+\end{array}
+,
+\end{equation}
+egy $n$-edfokú polinom $\lambda$-ban.
+\end{defin}
+
+\begin{tet}[Sajátértékek meghatározása]
+Az $A \in \mathbb{R}^{n \times n}$ mátrix sajátértékei az ún. \textit{karakterisztikus egyenlet}
+\begin{equation}
+\varphi (\lambda) = 0
+\end{equation}
+megoldásai. Mivel a $\varphi (\lambda)$ \textit{karakterisztikus polinom} egy $n$-edfokú polinom $\lambda$-ban, ezért a komplex számokon (multiplicitással együtt) $n$ megoldása van.
+\end{tet}
+
+\chapter{4. feladat}
+\hulipsum[1-3]
+\begin{lstlisting}[language=c, numbers=right, stepnumber=2, tabsize=2, showspaces=true, frame=shadowbox,
+title={Programkód 1. Bináris keresés C-ben}, float=hbt!]
+binarySearch(arr, x, low, high)
+	repeat till low = high
+		mid = (low + high)/2
+			if (x == arr[mid])
+				return mid
+
+			else if (x > arr[mid])	// x is on the right side
+				low = mid + 1
+
+			else			// x is on the left side
+				high = mid - 1
+\end{lstlisting}
+\hulipsum[1-2]
+\chapter{5. feladat}
+\newenvironment{vers}[2]
+{
+  \centering {\textbf{#1}\\\textit{#2}}
+  
+}
+{}
+
+\begin{vers}{Bordás Milán}{Írom a ZH-t}
+\hulipsum[1]
+\end{vers}
+
+\chapter{Bónusz feladat}
+\newcounter{index}
+\setcounter{index}{1}
+\whiledo{\value{index}<61}
+{
+\ifthenelse{\isodd{\value{index}}}{\textcolor{black}{\theindex}}{\textcolor{red}{\theindex}}
+\stepcounter{index}
+}
+\end{document}
