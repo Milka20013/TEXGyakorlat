@@ -1,0 +1,115 @@
+/// <reference path="./types/index.d.ts" />
+
+class GameScene extends Phaser.Scene {
+  constructor(title) {
+    super(title);
+  }
+  init() {}
+  preload() {
+    this.load.image("bg", "assets/img/background-city.png");
+    this.load.image("building", "assets/img/building.png");
+    this.load.image("car", "assets/img/car.png");
+    this.load.image("house", "assets/img/house.png");
+    this.load.image("tree", "assets/img/tree.png");
+  }
+  create() {
+    const gameHeight = this.sys.game.config.height;
+    const gameWidth = this.sys.game.config.width;
+
+    this.bg = this.add.sprite(0, 0, "bg");
+    this.bg.setOrigin(0, 0);
+
+    this.items = this.add.group([
+      {
+        key: "building",
+        setXY: {
+          x: gameWidth / 4,
+          y: gameHeight - 100,
+        },
+      },
+      {
+        key: "car",
+        setXY: {
+          x: gameWidth / 2,
+          y: gameHeight - 70,
+        },
+        setScale: {
+          x: 0.8,
+          y: 0.8,
+        },
+      },
+      {
+        key: "house",
+        setXY: {
+          x: gameWidth * 0.7,
+          y: gameHeight - 70,
+        },
+        setScale: {
+          x: 0.8,
+          y: 0.8,
+        },
+      },
+      {
+        key: "tree",
+        setXY: {
+          x: gameWidth - 80,
+          y: gameHeight - 70,
+        },
+        setScale: {
+          x: 0.8,
+          y: 0.8,
+        },
+      },
+    ]);
+
+    Phaser.Actions.Call(this.items.getChildren(), (item) => {
+      item.setInteractive({ cursor: "pointer" });
+      item.on("pointerdown", () => {
+        console.log(item.texture.key);
+        correctTween.play();
+      });
+      item.on("pointerover", () => {
+        alphaTween.play();
+      });
+      item.on("pointerout", () => {
+        alphaTween.pause();
+        alphaTween.reset();
+        item.alpha = 1;
+      });
+      const alphaTween = this.tweens.add({
+        targets: item,
+        alpha: 0.7,
+        duration: 200,
+        paused: true,
+        persist: true,
+      });
+      const correctTween = this.tweens.add({
+        targets: item,
+        scale: 3,
+        ease: Phaser.Math.Easing.Elastic.Out,
+        yoyo: true,
+        duration: 200,
+        paused: true,
+        persist: true,
+      });
+      const badTween = this.tweens.add({
+        targets: item,
+        scale: 0.7,
+        rotation: 3,
+        yoyo: true,
+        duration: 200,
+        paused: true,
+        persist: true,
+      });
+    });
+  }
+}
+
+const gameScene = new GameScene("game");
+
+const game = new Phaser.Game({
+  width: 640,
+  height: 360,
+  type: Phaser.AUTO,
+  scene: gameScene,
+});
