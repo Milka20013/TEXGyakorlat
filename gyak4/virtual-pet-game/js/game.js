@@ -35,8 +35,18 @@ class GameScene extends Phaser.Scene {
     this.bg.on("pointerdown", (pointer) => this.placeItem(pointer));
 
     this.pet = this.add.sprite(180, 380, "pet", 0);
+    this.pet.setDepth(1);
     this.pet.setInteractive({ cursor: "grab" });
-
+    this.pet.setData("speed", 0.5);
+    this.anims.create({
+      key: "eat",
+      duration: 500,
+      frames: this.anims.generateFrameNames("pet", {
+        frames: [1, 2, 3],
+      }),
+      frameRate: 7,
+      yoyo: true,
+    });
     this.input.setDraggable(this.pet);
     this.input.on("drag", (pointer, gameObject, dragX, dragY) => {
       gameObject.x = dragX;
@@ -85,7 +95,7 @@ class GameScene extends Phaser.Scene {
     item.alpha = 0.5;
   }
   placeItem(pointer) {
-    if (!this.selectedItem) {
+    if (!this.selectedItem || this.uiBlocked) {
       return;
     }
     this.uiBlocked = true;
@@ -95,9 +105,27 @@ class GameScene extends Phaser.Scene {
       pointer.worldY,
       this.selectedItem.texture.key
     );
-    this.updateStats(this.selectedItem.data.values.stats);
-    this.uiBlocked = false;
-    this.resetUI();
+    this.tweens.add({
+      targets: this.pet,
+      duration:
+        Phaser.Math.Distance.Between(
+          this.pet.x,
+          this.pet.y,
+          newItem.x,
+          newItem.y
+        ) / this.pet.data.values.speed,
+      x: newItem.x,
+      y: newItem.y,
+      onComplete: () => {
+        this.updateStats(this.selectedItem.data.values.stats);
+        this.pet.on(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+          this.uiBlocked = false;
+          this.resetUI();
+          newItem.destroy();
+        });
+        this.pet.play("eat");
+      },
+    });
   }
   rotatePet(item) {
     if (this.uiBlocked) {
