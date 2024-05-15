@@ -1,0 +1,120 @@
+feladat
+x="klnspg";#neptun kód
+z=charToRaw(iconv(x, "latin1", "UTF-8"))
+for (i in 1:6) v=paste("0x",z,sep="")
+e=strtoi(v)
+ax=e[1];ay=e[2];az=e[3];av=e[4];ss=sum(strtoi(v))+24
+cat("ax=",ax,"\n")
+cat("ay=",ay,"\n")
+cat("az=",az,"\n")
+cat("av=",av,"\n")
+cat("ss=",ss,"\n")
+ar=c( "FB","AAPL","AMZN","GOOG","NFLX","TSLA")
+ai=ss-6*floor(ss/6)
+ev=2022-(ss-10*floor(ss/10))
+cat("ev=",ev,"\n")
+cat("reszveny=",ar[ai+1],"\n")
+
+ax= 107
+ay= 108
+az= 110
+av= 115
+ss= 679
+ev= 2013
+reszveny= AAPL
+
+#1. feladat
+
+set.seed(ss)
+nx=500
+v=matrix(c(ax,abs(ax-ay),abs(ax-ay),ay),2)
+w=chol(v)
+z1=sqrt(-2*log(runif(nx)))*sin(runif(nx)*2*pi)
+z2=sqrt(-2*log(runif(nx)))*cos(runif(nx)*2*pi)
+zm=matrix(c(z1,z2),ncol=2)
+zn=10*zm%*%w
+
+#a,
+
+#statisztikai elemzés
+summary(zn)
+
+#paraméterek becslése
+mean_zn1 <- mean(zn[,1])
+mean_zn2 <- mean(zn[,2])
+sd_zn1 <- sd(zn[,1])
+sd_zn2 <- sd(zn[,2])
+
+cat("Az első változó várható értéke:", mean_zn1, "\n")
+cat("Az első változó szórása:", sd_zn1, "\n")
+cat("A második változó várható értéke:", mean_zn2, "\n")
+cat("A második változó szórása:", sd_zn2, "\n")
+
+# Illeszkedési tesztek elvégzése
+ks_test_result <- ks.test(zn[,1], "pnorm", mean = mean_zn1, sd = sd_zn1)
+sw_test_result <- shapiro.test(zn[,2])
+
+# Kiértékelés
+if (ks_test_result$p.value > 0.05 & sw_test_result$p.value > 0.05) {
+  cat("Az első változó normális eloszlású lehet.\n")
+} else {
+  cat("Az első változó nem normális eloszlású.\n")
+}
+
+
+#b, A kétdimenziós eloszlásról annyit tudunk mondani, hogy a két változó között van egyfajta kapcsolat (kovariancia), és ez a kapcsolat lehetővé teszi az eloszlás leírását egy bizonyos módon. Egyes esetekben a normál eloszlás egy jó közelítés lehet, de ez nem mindig igaz. Az eloszlás pontos jellege további elemzést igényelhet, például a korreláció együttható meghatározásával vagy a marginális eloszlások vizsgálatával. A kétdimenziós eloszlás további jellemzéséhez grafikus elemzések, például scatter plot vagy kontúr diagram használata is ajánlott.
+
+#2. feladat
+
+nx <- 700
+kor <- 0.6
+cov_matrix <- matrix(c(1, kor , kor , 1), ncol = 2)
+library(MASS)
+datas <- mvrnorm(n = nx, mu = c(2, 3), Sigma = cov_matrix)
+
+x <- rexp(nx, rate = exp(0.7 * datas [, 1]))
+y <- rexp(nx, rate = exp(0.7 * datas [, 2]))
+
+plot(x, y, xlab = "X", ylab = "Y", main = "Exponenciális eloszlás korrelációval")
+
+#3. feladat
+n=600
+set.seed(ss+139)
+library(stabledist)
+realizacio <- rstable(n, alpha = 1 + (ax + az) / (ax + ay + az), beta = 0, gamma = 100, delta = 11)
+
+# Realizáció ábrázolása
+par(mfrow=c(2,2))
+hist(realizacio, main="Histogram")
+plot(density(realizacio), main="Sűrűségfüggvény")
+qqnorm(realizacio, main="QQ plot")
+qqline(realizacio)
+
+#4. feladat
+#Letöltés. Fájl helye: AAPL.csv
+
+#5. feladat
+details <- read.csv("C:/Users/au087286/Desktop/MartinakMatyas_KLNSPG/AAPL.csv")
+logreturn <- c()
+close <- details$Close
+
+for (i in 1:(length(close) - 1)){
+  logreturn[i] <- abs(log(close[i + 1] / close[i]))
+}
+
+# Eloszlás
+library(ggpubr)
+ggdensity(logreturn) 
+qqPlot(logreturn)
+
+# Khi-square teszt
+chisq.test(logreturn)
+
+# Shapiro teszt
+shapiro.test(logreturn)
+ggdensity(logreturn)
+#a sűrűség függvény alapján látszik a poisson eloszlás
+
+# Statisztikák
+hist(logreturn, main="Záró árak változása")
+plot(logreturn)
